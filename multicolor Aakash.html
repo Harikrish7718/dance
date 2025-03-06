@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Dark Multi-Color Smooth Transition</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2em;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        // Define an array of dark colors for the transition
+        const colors = [
+            { r: 64, g: 64, b: 64 },    // Dark Grey
+            { r: 0, g: 0, b: 0 },       // Black
+            { r: 0, g: 100, b: 0 },     // Dark Green
+            { r: 139, g: 0, b: 0 },     // Dark Red
+            { r: 0, g: 0, b: 139 },     // Dark Blue
+            { r: 139, g: 139, b: 0 },   // Dark Yellow
+            { r: 204, g: 102, b: 0 },   // Dark Orange
+            { r: 255, g: 255, b: 255 }  // Dark White (Light Grey)
+        ];
+
+        // Timings for each transition step (in milliseconds)
+        const durations = [3000, 4000, 5000, 4000, 3000, 4000, 5000, 4000];
+        let currentStep = 0;
+        let startTime;
+
+        // Linear interpolation function
+        function lerp(start, end, t) {
+            return start + (end - start) * t;
+        }
+
+        function transitionColor(timestamp) {
+            if (!startTime) startTime = timestamp;
+            const elapsed = timestamp - startTime;
+            const duration = durations[currentStep]; // Get duration for the current transition
+            const stepProgress = Math.min(elapsed / duration, 1); // Ensure progress doesn't exceed 1
+
+            const colorStart = colors[currentStep];
+            const colorEnd = colors[currentStep + 1];
+
+            const r = Math.round(lerp(colorStart.r, colorEnd.r, stepProgress));
+            const g = Math.round(lerp(colorStart.g, colorEnd.g, stepProgress));
+            const b = Math.round(lerp(colorStart.b, colorEnd.b, stepProgress));
+
+            document.body.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+
+            if (elapsed < duration) {
+                requestAnimationFrame(transitionColor);
+            } else {
+                // Move to the next step
+                currentStep = (currentStep + 1) % (colors.length - 1);
+                startTime = null; // Reset startTime for the next transition
+                requestAnimationFrame(transitionColor);
+            }
+        }
+
+        requestAnimationFrame(transitionColor);
+    </script>
+</body>
+
+</html>
