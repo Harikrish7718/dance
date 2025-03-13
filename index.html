@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <title>Dark Multi-Color Smooth Transition</title>
+    <title>Alumni dance backdrop</title>
     <style>
         body {
             margin: 0;
@@ -15,58 +14,88 @@
         }
     </style>
 </head>
-
 <body>
-    <script>
-        // Define an array of dark colors for the transition
-        const colors = [
-            { r: 64, g: 64, b: 64 },    // Dark Grey
-            { r: 0, g: 0, b: 0 },       // Black
-            { r: 0, g: 100, b: 0 },     // Dark Green
-            { r: 139, g: 0, b: 0 },     // Dark Red
-            { r: 0, g: 0, b: 139 },     // Dark Blue
-            { r: 139, g: 139, b: 0 },   // Dark Yellow
-            { r: 204, g: 102, b: 0 },   // Dark Orange
-            { r: 255, g: 255, b: 255 }  // Dark White (Light Grey)
-        ];
+<script>
+    // Define an array of colors for the transition
+    const colors = [
+        { r: 128, g: 128, b: 128 }, // #808080 (Solid Grey)
+        { r: 128, g: 128, b: 128 }, // #808080 → #000000 (Transition from Grey to Black)
+        { r: 0, g: 0, b: 0 },       // #000000 (Solid Black)
+        { r: 0, g: 0, b: 0 },       // #000000 → #008101 (Transition from Black to Green)
+        { r: 0, g: 129, b: 1 },     // #008101 (Solid Green)
+        { r: 0, g: 129, b: 1 },     // #008101 → #df0f41 (Transition from Green to Red)
+        { r: 223, g: 15, b: 65 },   // #df0f41 (Solid Red)
+        { r: 223, g: 15, b: 65 },   // #df0f41 → #145da2 (Transition from Red to Blue)
+        { r: 20, g: 93, b: 162 },   // #145da2 (Solid Blue)
+        { r: 20, g: 93, b: 162 },   // #145da2 → #ffd130 (Transition from Blue to Yellow)
+        { r: 255, g: 209, b: 48 },  // #ffd130 (Solid Yellow)
+        { r: 255, g: 209, b: 48 },  // #ffd130 → #ea6b0e (Transition from Yellow to Orange)
+        { r: 234, g: 107, b: 14 },  // #ea6b0e (Solid Orange)
+        { r: 234, g: 107, b: 14 },  // #ea6b0e → #ffffff (Transition from Orange to White)
+        { r: 255, g: 255, b: 255 }  // #ffffff (Solid White)
+    ];
 
-        // Timings for each transition step (in milliseconds)
-        const durations = [3000, 4000, 5000, 4000, 3000, 4000, 5000, 4000];
-        let currentStep = 0;
-        let startTime;
+    // Timings for each transition step (in milliseconds)
+    const durations = [
+        116000,   // Solid Grey
+        14000,   // Grey to Black Transition
+        72000,   // Solid Black
+        28000,   // Black to Green Transition
+        57000,   // Solid Green
+        35000,   // Green to Red Transition
+        72000,   // Solid Red
+        11000,   // Red to Blue Transition
+        79000,   // Solid Blue
+        49000,   // Blue to Yellow Transition
+        74000,   // Solid Yellow
+        24000,   // Yellow to Orange Transition
+        74000,   // Solid Orange
+        51000,   // Orange to White Transition
+        150000   // Solid White (150 seconds)
+    ];
 
-        // Linear interpolation function
-        function lerp(start, end, t) {
-            return start + (end - start) * t;
+    let currentStep = 0;
+    let startTime;
+
+    // Linear interpolation function
+    function lerp(start, end, t) {
+        return start + (end - start) * t;
+    }
+
+    function transitionColor(timestamp) {
+        if (!startTime) startTime = timestamp;
+        const elapsed = timestamp - startTime;
+        const duration = durations[currentStep];
+        const stepProgress = Math.min(elapsed / duration, 1);
+        const colorStart = colors[currentStep];
+        const colorEnd = colors[currentStep + 1];
+
+        let r, g, b;
+        if (currentStep % 2 === 1) { // Only transition on odd indices
+            r = Math.round(lerp(colorStart.r, colorEnd.r, stepProgress));
+            g = Math.round(lerp(colorStart.g, colorEnd.g, stepProgress));
+            b = Math.round(lerp(colorStart.b, colorEnd.b, stepProgress));
+        } else { // Solid color on even indices
+            r = colorStart.r;
+            g = colorStart.g;
+            b = colorStart.b;
         }
 
-        function transitionColor(timestamp) {
-            if (!startTime) startTime = timestamp;
-            const elapsed = timestamp - startTime;
-            const duration = durations[currentStep]; // Get duration for the current transition
-            const stepProgress = Math.min(elapsed / duration, 1); // Ensure progress doesn't exceed 1
+        document.body.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
 
-            const colorStart = colors[currentStep];
-            const colorEnd = colors[currentStep + 1];
-
-            const r = Math.round(lerp(colorStart.r, colorEnd.r, stepProgress));
-            const g = Math.round(lerp(colorStart.g, colorEnd.g, stepProgress));
-            const b = Math.round(lerp(colorStart.b, colorEnd.b, stepProgress));
-
-            document.body.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
-
-            if (elapsed < duration) {
-                requestAnimationFrame(transitionColor);
-            } else {
-                // Move to the next step
-                currentStep = (currentStep + 1) % (colors.length - 1);
+        if (elapsed < duration) {
+            requestAnimationFrame(transitionColor);
+        } else {
+            // Move to the next step
+            currentStep++;
+            if (currentStep < colors.length - 1) {
                 startTime = null; // Reset startTime for the next transition
                 requestAnimationFrame(transitionColor);
             }
         }
+    }
 
-        requestAnimationFrame(transitionColor);
-    </script>
+    requestAnimationFrame(transitionColor);
+</script>
 </body>
-
 </html>
